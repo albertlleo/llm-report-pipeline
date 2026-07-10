@@ -12,15 +12,15 @@ HTML report, saves it to GCS, and delivers it by email via SendGrid.
 
 ## Components
 
-| Component | Purpose                                                                  |
-|-----------|--------------------------------------------------------------------------|
-| Cloud Run | Serverless container, HTTP entrypoint (`/run`, `/health`)                |
-| Cloud Scheduler | Fires daily POST per client at configured time (Europe/Madrid)           |
-| BigQuery | Data source per-client, isolated datasets with GCP Service Accounts (SA) |
-| Secret Manager | Stores SA keys (`sa-key-{client_id}`) and SendGrid API key               |
-| Vertex AI | Gemini 3 Flash: Reporter, Verifier, Trends agents                        |
-| GCS `acme-prod-reports` | HTML report storage: audit trail and KPI history for trends              |
-| SendGrid | Email delivery                                                           |
+| Component             | Purpose                                                                  |
+|-----------------------|--------------------------------------------------------------------------|
+| Cloud Run             | Serverless container, HTTP entrypoint (`/run`, `/health`)                |
+| Cloud Scheduler       | Fires daily POST per client at configured time (Europe/Madrid)           |
+| BigQuery              | Data source per-client, isolated datasets with GCP Service Accounts (SA) |
+| Secret Manager        | Stores SA keys (`sa-key-{client_id}`) and SendGrid API key               |
+| Vertex AI             | Gemini 3 Flash: Reporter, Verifier, Trends agents                        |
+| GCS `id-prod-reports` | HTML report storage: audit trail and KPI history for trends              |
+| SendGrid              | Email delivery                                                           |
 
 ## LLM Pipeline (three agents)
 ![llm_agents.png](images%2Fllm_agents.png)
@@ -56,7 +56,7 @@ The HTML email contains these sections in order:
 ## Scheduling
 
 ```
-08:30 CET — client-b-demo
+08:30 CET — client_c
 ```
 
 Schedules are defined in `terraform/pipeline.tf` --> `local.client_schedules`.
