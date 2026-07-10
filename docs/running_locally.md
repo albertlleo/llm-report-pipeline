@@ -9,13 +9,12 @@
 ## Setup
 
 ```bash
-# Install a native ARM64 Python (Apple Silicon only — skip on Linux/Intel)
 uv python install 3.13
 
 # Install dependencies
 uv sync
 
-# Authenticate to GCP (required for BQ, GCS, Vertex AI, Secret Manager)
+# Authenticate to GCP
 gcloud auth application-default login
 ```
 
@@ -27,7 +26,7 @@ gcloud auth application-default login
 
 ### End-to-end pipeline preview
 
-Runs the full pipeline — real BigQuery data, real LLM calls, real GCS history — and opens the HTML in the browser. Does **not** send email.
+Runs the full pipeline and opens the HTML in the browser. Does **not** send email.
 
 ```bash
 uv run python tests/e2e_preview.py client-b-demo

@@ -1,38 +1,14 @@
 # Architecture
+Full Architecture diagrams can be seen here: https://drive.google.com/file/d/1zOQcqUTeornu5D2yTT9z_9i3lvijQNGf/view?usp=sharing
 ## Overview
 
 The pipeline runs as a serverless container on **Cloud Run**, triggered daily by **Cloud Scheduler**. It uses 
 per-client data from BigQuery in a secure way, runs a three-agent LLM analysis via Vertex AI, builds a branded 
 HTML report, saves it to GCS, and delivers it by email via SendGrid.
 
-```
-Cloud Scheduler
-     │  POST /run  {"client_id": "client-b-demo"}
-     ▼
-Cloud Run (llm-report-pipeline)
-     │
-     ├─► Secret Manager ──► fetch SA key for client
-     │
-     ├─► BigQuery (impersonating client SA)
-     │       └─► raw tables OR custom SQL queries
-     │
-     ├─► GCS (acme-prod-reports)
-     │       └─► read last 14 HTML reports → extract KPI history
-     │
-     ├─► Vertex AI: Gemini 3 Flash
-     │       ├─► Agent 1: Reporter  (drafts the report)
-     │       ├─► Agent 2: Verifier  (audits numbers, may rewrite)
-     │       └─► Agent 3: Trends    (detects patterns from history)
-     │
-     ├─► report_builder.py
-     │       └─► branded HTML email with KPI cards + trend chart
-     │
-     ├─► GCS (acme-prod-reports)
-     │       └─► save report_YYYY-MM-DD.html (audit trail + history)
-     │
-     └─► SendGrid ──► email to client recipients
-```
+## General Infrastructure architecture
 
+![main_arch.png](images%2Fmain_arch.png)
 
 ## Components
 
@@ -49,25 +25,6 @@ Cloud Run (llm-report-pipeline)
 ## LLM Pipeline (three agents)
 ![llm_agents.png](images%2Fllm_agents.png)
 
-```
-Raw BQ data
-     │
-     ▼
-Reporter (Gemini 3 Flash + thinking)
-     │  draft markdown report
-     ▼
-Verifier (Gemini 3 Flash + code execution)
-     │  audits numbers against raw data
-     │  → "approve" or "revise" (max 2 passes)
-     ▼
-Final report markdown
-     │
-     ├─► Trends agent (Gemini 3 Flash, no thinking)
-     │       └─► analyses last N days of KPI history
-     │           adds "7. Trends" section
-     ▼
-HTML builder → email + GCS
-```
 
 
 ## Security
@@ -104,9 +61,7 @@ The HTML email contains these sections in order:
 
 Schedules are defined in `terraform/pipeline.tf` --> `local.client_schedules`.
 
-## General Infrastructure architecture
 
-See `docs/images/cicd.png` and `docs/images/llm_agents.png` for the CI/CD and agent-workflow diagrams.
 
 ## CICD
 
