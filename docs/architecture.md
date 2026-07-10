@@ -29,7 +29,7 @@ HTML report, saves it to GCS, and delivers it by email via SendGrid.
 
 ## Security
 
-- **One SA per client**: `sa-{client_id}@acme-prod.iam.gserviceaccount.com`
+- **One SA per client**: `sa-{client_id}@id_comp-prod.iam.gserviceaccount.com`
 - Each SA has `bigquery.dataViewer` only on its own dataset (not project-wide)
 - Each SA has `bigquery.jobUser` to run sql queries
 - SA keys stored in Secret Manager, never in code or environment variables
