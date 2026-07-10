@@ -1,10 +1,11 @@
 """
-Gemini two-agent pipeline for daily marketing report generation.
+Gemini pipeline for daily marketing report generation.
 
-Agent 1 (Reporter): drafts the report from raw BQ data.
-Agent 2 (Verifier): audits the draft for accuracy and returns a JSON verdict.
-If the Verifier requests revision, the Reporter is called again (max 2 passes).
-If blockers remain after 2 passes, the last draft is returned with a warning.
+Reporter: drafts the report from raw BQ data.
+Verifier: audits the draft for accuracy and returns a JSON verdict.
+  If it requests revision, the Reporter is called again (max 2 passes).
+  If blockers remain after 2 passes, the last draft is returned with a warning.
+Trends: streaming path only — analyses KPI history and appends a trends section.
 """
 
 import concurrent.futures
@@ -204,7 +205,8 @@ def _log_usage(usage, agent: str = "") -> None:
 
 def analyse(client_id: str, client_name: str, tables: dict[str, pd.DataFrame]) -> str:
     """
-    Run the two-agent pipeline (Reporter + Verifier) over the provided DataFrames.
+    Run the Reporter + Verifier loop over the provided DataFrames.
+    (Trends agent doesn't run here — see analyse_stream.)
     Agent 1: Reporter. It creates a draft with the context provided from BQ
     Agent 2: Verifier. 2.1 Receives the draft + initial context.
                        2.2 It has access to a Tool of python to verify that the
