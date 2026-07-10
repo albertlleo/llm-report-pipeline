@@ -1,0 +1,11 @@
+.env
+*.json
+__pycache__/
+.terraform/
+terraform.tfstate
+terraform.tfstate.backup
+.DS_Store
+*.pyc
+.pytest_cache/
+.idea/
+.venv/
